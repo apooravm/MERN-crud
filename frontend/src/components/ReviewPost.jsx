@@ -7,7 +7,29 @@ const ReviewForm = () => {
 
     const submitHandler = (event) => {
         event.preventDefault();
-        alert("Posted!");
+        const url = "http://localhost:4000/api/post";
+        const reviewData = {
+            "review": {
+                "username": username,
+                "comment": comment,
+                "rating": rating
+            }
+        }
+        const options = {
+                method: "POST",  
+                headers: {
+                    "Content-Type": "application/json",
+                }, 
+                body: JSON.stringify(reviewData), 
+          }
+        
+        fetch(url, options)
+        .then((res) => {
+            console.log(res.json());
+        })
+        .catch(err => {
+            console.log(err);
+        })
     }
 
     return (

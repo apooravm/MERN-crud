@@ -26,28 +26,45 @@ const postData = async () => {
 }
 
 function App() {
-  const [reviews, setReviews] = useState([]);
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      const reviewData = await getData();
-      setReviews(reviewData);
-    }
-    fetchReviews();
-  }, []);
+  const [reviewData, setReviewData] = useState([]);
+  const [currState, setCurrState] = useState(false);
+
+  const handleGetButton = (event) => {
+    event.preventDefault();
+    const revData = getData();
+
+    revData.then((data) => {
+      setReviewData(data);
+      setCurrState(true);
+      console.log(currState)
+      console.log(data);
+    })
+  }
 
   return (
     <div>
       <ReviewForm>
 
       </ReviewForm>
-      {reviews.length > 0 ? (
-        reviews.map((review) => (
-          <ReviewBox key={review.id} review={review} />
-        ))
-      ) : (
-        <p>Loading...</p>
-      )}
+      <button onClick={handleGetButton}>
+        Get Reviews
+      </button>
+      {currState ? reviewData.map((review, index) => {
+        return (
+        <div key={index}>
+
+          <h2>
+            {review.username}
+          </h2>
+          <p>
+            {review.comment}
+          </p>
+          <p>
+            {review.rating}
+          </p>
+        </div>)
+      }): <></>}
     </div>
   );
 }

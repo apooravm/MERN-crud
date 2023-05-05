@@ -5,7 +5,7 @@ const ReviewBox = ({ review }) => {
     console.log(review);
     return (
       <div>
-        <h3>{username}</h3>
+        <p>{username}</p>
         <p>{comment}</p>
         <p>Rating: {rating}/5</p>
       </div>
