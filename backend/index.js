@@ -8,78 +8,98 @@ const url = `mongodb://0.0.0.0:27017/mydatabase`;
 
 const app = express();
 app.use(cors());
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 
-// MongoClient.connect(url, function(err, client) {
-//     console.log("in bruh");
-//     if (err) throw err;
-//     console.log("Database created!");
 
-//     const db = client.db(dbName);
-//     const userCollection = db.collection(collName);
-
-//     app.get("/api/get", (req, res) => {
-//         try {
-//             const query = {};
-//             userCollection.find(query).toArray((err, result) => {
-//                 if (err) throw err;
-//                 res.status(200).json(result);
-//                 client.close();
-//             })
-//         } catch (error) {
-//             res.status(500).json(error);
-//         }
-//     });
-// });
-
-const sampleData = [  {    "username": "GigiGoo",    "rating": 4.5,    "comment": "This show is a rollercoaster of emotions with captivating characters and a thrilling storyline!"  },  
-                      {    "username": "RockyRaccoon",    "rating": 2,    "comment": "Unfortunately, this show misses the mark with dull characters and a predictable plot. It's a snooze-fest."  },  
-                      {    "username": "BillyBob",    "rating": 4,    "comment": "I'm loving this show! The plot twists and cliffhangers keep me on the edge of my seat!"  },  
-                      {    "username": "SassySue",    "rating": 1.5,    "comment": "I couldn't even make it through the first episode. The acting is cringe-worthy and the storyline is laughably bad."  },  
-                      {    "username": "FunkyMonkey",    "rating": 3.5,    "comment": "This show has its ups and downs, but overall it's an enjoyable watch with some interesting characters and a decent plot."  },  
-                      {    "username": "BobbyBoop",    "rating": 2.5,    "comment": "Meh. This show is mediocre at best. The characters are forgettable and the storyline is bland."  },  
-                      {    "username": "CrazyCat",    "rating": 5,    "comment": "I'm absolutely obsessed with this show! The characters are complex and the storyline is gripping. It's a must-watch!"  },  
-                      {    "username": "SillySam",    "rating": 1,    "comment": "Save yourself the time and skip this one. The writing is terrible and the acting is worse. Easily the worst show I've ever seen."  },  
-                      {    "username": "LuckyLou",    "rating": 4,    "comment": "This show is a fun and exciting ride! The characters are lovable and the storyline keeps you guessing until the very end."  },  
-                      {    "username": "DopeyDave",    "rating": 2.5,    "comment": "There are moments of potential, but ultimately this show falls short with uninteresting characters and a meandering plot."  }
-                    ]
+app.get("/", (req, res) => {
+    res.send("<h1>Success!</h1>");
+})
 
 app.get("/api/get", (req, res) => {
     try {
-        const query = {};
-        res.status(200).json(sampleData);
+        MongoClient.connect(url)
+        .then((client) => {
+            const db = client.db(dbName);
+
+            db.collection(collName).find({}).toArray()
+            .then((data) => {
+                res.json(data);
+            })
+        })
+        .catch((err) => {
+            throw err
+        });
     } catch (error) {
-        res.status(500).json(error);
+        res.status(200).json(error);     
     }
 });
 
 app.post("/api/post", (req, res) => {
     try {
-        const newData = req.body.data;
+        const data = req.body.review;
+        console.log(data);
+        MongoClient.connect(url)
+        .then((client) => {
+            const db = client.db(dbName);
 
-        res.status(200);
+            db.collection(collName).insertOne(data)
+            .then(() => {
+                res.status(200).json("Inserted!");
+                client.close();
+            })
+            .catch(err => {
+                throw err;
+            })
+        })
     } catch (error) {
         res.status(500).json(error);
     }
-});
-
-app.put("/api/put", (req, res) => {
-    try {
-        const data_id = req.body.id;
-        const updatedData = req.body.data;
-
-        res.status(200);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-});
+})
 
 app.delete("/api/delete", (req, res) => {
     try {
-        const data_id = req.body.id;
+        const username = req.body.username;
+        MongoClient.connect(url)
+        .then((client) => {
+            const db = client.db(dbName);
 
-        res.status(200);
+            db.collection(collName).deleteOne({"username": username})
+            .then(() => {
+                res.status(200).json(`Deleted ${username}'s review!`);
+                client.close();
+            })
+            .catch(err => {
+                throw err;
+            })
+        })
     } catch (error) {
         res.status(500).json(error);
+    }
+})
+
+app.put("/api/update", (req, res) => {
+    try {
+        const newData = req.body.review;
+        const username = req.body.username;
+
+        MongoClient.connect(url)
+        .then((client) => {
+            const db = client.db(dbName);
+
+            db.collection(collName).updateOne({"username": username}, {
+                $set: newData
+            })
+            .then(() => {
+                res.status(200).json(`Updated ${username}'s review!`);
+                client.close();
+            })
+            .catch(err => {
+                throw err;
+            })
+        })
+    } catch (error) {
+        
     }
 })
 
