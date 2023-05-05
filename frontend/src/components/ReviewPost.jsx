@@ -5,8 +5,13 @@ const ReviewForm = () => {
     const [comment, setComment] = useState("");
     const [rating, setRating] = useState(0);
 
+    const submitHandler = (event) => {
+        event.preventDefault();
+        alert("Posted!");
+    }
+
     return (
-        <form>
+        <form onSubmit={submitHandler}>
             <div>
                 <label>Username: </label>
                 <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}/>
@@ -21,6 +26,10 @@ const ReviewForm = () => {
                 <label>Rating: </label>
                 <input type="number" max={5} min={0} value={rating} onChange={(e) => setRating(e.target.value)}/>
             </div>
+            <div>
+                <button type="submit">Post Review</button>
+            </div>
+            
         </form>
     )
 }

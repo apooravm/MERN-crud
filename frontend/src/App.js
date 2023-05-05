@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import ReviewBox from './components/ReviewBox';
-import ReviewForm from './components/ReviewForm';
+import ReviewBox from './components/ReviewGet';
+import ReviewForm from './components/ReviewPost';
 
 const getData = async () => {
   try {
@@ -39,7 +39,7 @@ function App() {
   return (
     <div>
       <ReviewForm>
-        
+
       </ReviewForm>
       {reviews.length > 0 ? (
         reviews.map((review) => (
