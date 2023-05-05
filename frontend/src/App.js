@@ -1,32 +1,54 @@
+import { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-
-const ReviewBox = ({ review }) => {
-  const { username, review: reviewText, rating } = review;
-  return (
-    <div>
-      <h3>{username}</h3>
-      <p>{reviewText}</p>
-      <p>Rating: {rating}/5</p>
-    </div>
-  );
-};
+import ReviewBox from './components/ReviewBox';
+import ReviewForm from './components/ReviewForm';
 
 const getData = async () => {
-  const url = "http://localhost:4000/api/get";
-  await fetch(url)
-  .then((data) => {
-    const dataArray = data.json();
-    return dataArray[0];
-  })
+  try {
+    const url = "http://localhost:4000/api/get";
+    const response = await fetch(url);
+    const dataArray = await response.json();
+    return dataArray;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
+const postData = async () => {
+  try {
+    const url = "http://localhost:400/api/post";
+    const data = ""
+  } catch (err) {
+    
+  }
+}
 
 function App() {
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const reviewData = await getData();
+      setReviews(reviewData);
+    }
+    fetchReviews();
+  }, []);
+
   return (
-   <div>
-    {getData}
-   </div> 
+    <div>
+      <ReviewForm>
+        
+      </ReviewForm>
+      {reviews.length > 0 ? (
+        reviews.map((review) => (
+          <ReviewBox key={review.id} review={review} />
+        ))
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
   );
 }
 
